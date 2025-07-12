@@ -398,7 +398,7 @@ The application is designed with modularity in mind:
 
 ## Changelog
 
-### Version 1.0.0 (2024-01-XX)
+### Version 1.0.0 (2025-07-12)
 
 **Initial Release**
 

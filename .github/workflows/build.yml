@@ -1,0 +1,55 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+
+      - name: Get dependencies
+        run: make deps
+
+      - name: Format code
+        run: make fmt
+
+      - name: Vet code
+        run: make vet
+
+      - name: Run tests
+        run: make test
+
+      - name: Build
+        run: make build
+
+  build-all:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.21"
+
+      - name: Get dependencies
+        run: make deps
+
+      - name: Build all platforms
+        run: make build-all
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: binaries
+          path: build/
