@@ -50,7 +50,7 @@ jobs:
           go build -ldflags "-X main.version=${VERSION} -w -s" -o ${OUTPUT_NAME} ./cmd/main.go
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: restic-backup-checker-${{ matrix.name }}
           path: restic-backup-checker-${{ matrix.name }}${{ matrix.ext }}
@@ -62,18 +62,16 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: ./artifacts
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Create Release with Assets
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
           body: |
             ## Changes
 
@@ -106,55 +104,11 @@ jobs:
             # Start monitoring
             ./restic-backup-checker
             ```
+          files: |
+            ./artifacts/restic-backup-checker-linux-amd64/restic-backup-checker-linux-amd64
+            ./artifacts/restic-backup-checker-linux-arm64/restic-backup-checker-linux-arm64
+            ./artifacts/restic-backup-checker-darwin-amd64/restic-backup-checker-darwin-amd64
+            ./artifacts/restic-backup-checker-darwin-arm64/restic-backup-checker-darwin-arm64
+            ./artifacts/restic-backup-checker-windows-amd64/restic-backup-checker-windows-amd64.exe
           draft: false
           prerelease: false
-
-      - name: Upload Linux AMD64
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/restic-backup-checker-linux-amd64/restic-backup-checker-linux-amd64
-          asset_name: restic-backup-checker-linux-amd64
-          asset_content_type: application/octet-stream
-
-      - name: Upload Linux ARM64
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/restic-backup-checker-linux-arm64/restic-backup-checker-linux-arm64
-          asset_name: restic-backup-checker-linux-arm64
-          asset_content_type: application/octet-stream
-
-      - name: Upload macOS AMD64
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/restic-backup-checker-darwin-amd64/restic-backup-checker-darwin-amd64
-          asset_name: restic-backup-checker-darwin-amd64
-          asset_content_type: application/octet-stream
-
-      - name: Upload macOS ARM64
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/restic-backup-checker-darwin-arm64/restic-backup-checker-darwin-arm64
-          asset_name: restic-backup-checker-darwin-arm64
-          asset_content_type: application/octet-stream
-
-      - name: Upload Windows AMD64
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/restic-backup-checker-windows-amd64/restic-backup-checker-windows-amd64.exe
-          asset_name: restic-backup-checker-windows-amd64.exe
-          asset_content_type: application/octet-stream
