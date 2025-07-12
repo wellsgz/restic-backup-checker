@@ -1,0 +1,74 @@
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+coverage.html
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# Build directory
+build/
+dist/
+
+# Application binary
+restic-backup-checker*
+backup-checker*
+
+# Configuration files (encrypted)
+config.enc
+*.enc
+
+# Log files
+*.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Environment files
+.env
+.env.local
+
+# Test coverage
+profile.cov
+coverage.txt
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Archives
+*.tar.gz
+*.zip
+
+# Sensitive test data
+test-data/
+*.pem
+*.key
+*.crt 
