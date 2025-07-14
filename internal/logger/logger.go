@@ -30,4 +30,4 @@ func Fatal(format string, args ...interface{}) {
 // Debug logs a debug message
 func Debug(format string, args ...interface{}) {
 	log.Printf("DEBUG: "+format, args...)
-} 
+}

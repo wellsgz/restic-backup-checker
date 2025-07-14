@@ -97,4 +97,4 @@ func (c *Client) SendSummaryReport(totalClients int, successCount int, failedCou
 	}
 
 	return c.SendMessage(message)
-} 
+}

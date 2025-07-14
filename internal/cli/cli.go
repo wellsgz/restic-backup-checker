@@ -228,7 +228,7 @@ func setupOneDrive(cfg *config.Config) error {
 		fmt.Print("Would you like to login now? (y/N): ")
 		response, _ := reader.ReadString('\n')
 		response = strings.TrimSpace(strings.ToLower(response))
-		
+
 		if response == "y" || response == "yes" {
 			if err := loginToOneDrive(cfg); err != nil {
 				return fmt.Errorf("failed to login to OneDrive: %w", err)
@@ -344,4 +344,4 @@ func confirmReset() bool {
 	response, _ := reader.ReadString('\n')
 	response = strings.TrimSpace(strings.ToLower(response))
 	return response == "y" || response == "yes"
-} 
+}

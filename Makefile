@@ -40,9 +40,8 @@ build-all: clean
 	@echo "Building $(APP_NAME) for all platforms..."
 	@mkdir -p $(BUILD_DIR)
 	@for platform in $(PLATFORMS); do \
-		platform_split=($${platform//\// }); \
-		GOOS=$${platform_split[0]}; \
-		GOARCH=$${platform_split[1]}; \
+		GOOS=$${platform%/*}; \
+		GOARCH=$${platform#*/}; \
 		output_name=$(APP_NAME)-$$GOOS-$$GOARCH; \
 		if [ $$GOOS = "windows" ]; then \
 			output_name=$$output_name.exe; \

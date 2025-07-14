@@ -126,6 +126,7 @@ chmod +x restic-backup-checker-*
 1. **Check permissions**: Ensure the repository has Actions enabled
 2. **Check secrets**: The `GITHUB_TOKEN` is automatically provided
 3. **Check workflow file**: Verify the YAML syntax is correct
+4. **Action versions**: Ensure you're using the latest versions of GitHub Actions (v4 for artifacts)
 
 ### Build Failures
 

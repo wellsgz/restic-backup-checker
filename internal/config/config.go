@@ -17,10 +17,10 @@ import (
 
 // Config represents the application configuration
 type Config struct {
-	OneDrive     OneDriveConfig     `json:"onedrive"`
-	Telegram     TelegramConfig     `json:"telegram"`
-	Monitoring   MonitoringConfig   `json:"monitoring"`
-	configPath   string
+	OneDrive      OneDriveConfig   `json:"onedrive"`
+	Telegram      TelegramConfig   `json:"telegram"`
+	Monitoring    MonitoringConfig `json:"monitoring"`
+	configPath    string
 	encryptionKey []byte
 }
 
@@ -188,4 +188,4 @@ func generateEncryptionKey() []byte {
 // IsConfigured returns true if the configuration is properly set up
 func (c *Config) IsConfigured() bool {
 	return c.OneDrive.AccessToken != "" && c.Telegram.BotToken != ""
-} 
+}

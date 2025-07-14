@@ -36,12 +36,12 @@ type DeviceCodeResponse struct {
 
 // TokenResponse represents the response from the token endpoint
 type TokenResponse struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	ExpiresIn    int    `json:"expires_in"`
-	TokenType    string `json:"token_type"`
-	Scope        string `json:"scope"`
-	Error        string `json:"error"`
+	AccessToken      string `json:"access_token"`
+	RefreshToken     string `json:"refresh_token"`
+	ExpiresIn        int    `json:"expires_in"`
+	TokenType        string `json:"token_type"`
+	Scope            string `json:"scope"`
+	Error            string `json:"error"`
 	ErrorDescription string `json:"error_description"`
 }
 
@@ -188,4 +188,4 @@ func (a *Authenticator) RefreshToken(token *oauth2.Token) (*oauth2.Token, error)
 		TokenType:    tokenResp.TokenType,
 		Expiry:       time.Now().Add(time.Duration(tokenResp.ExpiresIn) * time.Second),
 	}, nil
-} 
+}
