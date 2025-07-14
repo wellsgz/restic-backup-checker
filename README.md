@@ -190,15 +190,15 @@ OneDrive/
 - Top-level folders are selected during setup
 - Each client has its own subfolder
 - Backup files must be in a `snapshots` subfolder
-- Files created "today" indicate successful backups
+- Files created within the last 24 hours indicate successful backups
 
 ## Monitoring Logic
 
-The application checks for backup files created on the current day (UTC) within each client's `snapshots` folder. If no files are found for today, it triggers an alert.
+The application checks for backup files created within the last 24 hours within each client's `snapshots` folder. If no files are found within this timeframe, it triggers an alert.
 
 ### Backup Validation
 
-1. **Daily Check**: Looks for files created today in each `snapshots` folder
+1. **24-Hour Check**: Looks for files created within the last 24 hours in each `snapshots` folder
 2. **Client Status**: Each client folder is checked independently
 3. **Notifications**: Alerts sent for failed backups, summary reports for all clients
 

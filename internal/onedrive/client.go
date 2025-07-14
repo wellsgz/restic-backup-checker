@@ -47,7 +47,7 @@ func NewClient(accessToken string) *Client {
 // GetTopLevelFolders retrieves top-level folders from OneDrive
 func (c *Client) GetTopLevelFolders() ([]Folder, error) {
 	url := fmt.Sprintf("%s/me/drive/root/children", c.baseURL)
-	
+
 	resp, err := c.makeRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (c *Client) GetTopLevelFolders() ([]Folder, error) {
 // GetFolderContents retrieves contents of a specific folder
 func (c *Client) GetFolderContents(folderID string) ([]FileInfo, error) {
 	url := fmt.Sprintf("%s/me/drive/items/%s/children", c.baseURL, folderID)
-	
+
 	resp, err := c.makeRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func (c *Client) GetFolderContents(folderID string) ([]FileInfo, error) {
 				ID:   itemMap["id"].(string),
 				Name: itemMap["name"].(string),
 			}
-			
+
 			if size, ok := itemMap["size"].(float64); ok {
 				file.Size = int64(size)
 			}
@@ -137,7 +137,7 @@ func (c *Client) GetFolderContents(folderID string) ([]FileInfo, error) {
 // GetSubfolders retrieves subfolders from a specific folder
 func (c *Client) GetSubfolders(folderID string) ([]Folder, error) {
 	url := fmt.Sprintf("%s/me/drive/items/%s/children", c.baseURL, folderID)
-	
+
 	resp, err := c.makeRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -207,7 +207,7 @@ func (c *Client) GetAllSnapshots(folderID string) ([]FileInfo, error) {
 	return files, nil
 }
 
-// CheckTodayBackups checks if there are files created today in the snapshots folder
+// CheckTodayBackups checks if there are files created in the last 24 hours in the snapshots folder
 func (c *Client) CheckTodayBackups(folderID string) (bool, []FileInfo, error) {
 	// Get all snapshot files
 	allFiles, err := c.GetAllSnapshots(folderID)
@@ -215,18 +215,18 @@ func (c *Client) CheckTodayBackups(folderID string) (bool, []FileInfo, error) {
 		return false, nil, err
 	}
 
-	// Check if any files were created today
-	today := time.Now().UTC().Truncate(24 * time.Hour)
-	var todayFiles []FileInfo
-	
+	// Check if any files were created in the last 24 hours
+	now := time.Now().UTC()
+	twentyFourHoursAgo := now.Add(-24 * time.Hour)
+	var recentFiles []FileInfo
+
 	for _, file := range allFiles {
-		fileDate := file.CreatedTime.UTC().Truncate(24 * time.Hour)
-		if fileDate.Equal(today) {
-			todayFiles = append(todayFiles, file)
+		if file.CreatedTime.UTC().After(twentyFourHoursAgo) {
+			recentFiles = append(recentFiles, file)
 		}
 	}
 
-	return len(todayFiles) > 0, todayFiles, nil
+	return len(recentFiles) > 0, recentFiles, nil
 }
 
 // makeRequest makes an HTTP request to the OneDrive API
@@ -249,4 +249,4 @@ func (c *Client) makeRequest(method, url string, body interface{}) (*http.Respon
 	}
 
 	return resp, nil
-} 
+}

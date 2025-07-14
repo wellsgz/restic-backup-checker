@@ -24,12 +24,12 @@ type Monitor struct {
 
 // BackupStatus represents the status of a backup check
 type BackupStatus struct {
-	ClientName   string
-	FolderPath   string
-	HasBackup    bool
-	FileCount    int
-	LastBackup   time.Time
-	Error        error
+	ClientName string
+	FolderPath string
+	HasBackup  bool
+	FileCount  int
+	LastBackup time.Time
+	Error      error
 }
 
 // New creates a new Monitor instance
@@ -53,7 +53,7 @@ func (m *Monitor) Start() error {
 	}
 
 	logger.Info("Starting backup monitoring service...")
-	
+
 	// Run initial check
 	if err := m.CheckOnce(); err != nil {
 		logger.Error("Initial backup check failed: %v", err)
@@ -64,11 +64,11 @@ func (m *Monitor) Start() error {
 	go m.monitoringLoop()
 
 	logger.Info("Backup monitoring service started")
-	
+
 	// Wait for stop signal
 	<-m.stopChan
 	m.wg.Wait()
-	
+
 	return nil
 }
 
@@ -90,7 +90,7 @@ func (m *Monitor) CheckOnce() error {
 	}
 
 	client := onedrive.NewClient(m.config.OneDrive.AccessToken)
-	
+
 	var statuses []BackupStatus
 	var successCount, failedCount int
 	var failedClients []string
@@ -98,7 +98,7 @@ func (m *Monitor) CheckOnce() error {
 	// Check each monitored path
 	for i, folderID := range m.config.OneDrive.MonitorPaths {
 		logger.Debug("Checking monitored path %d/%d: %s", i+1, len(m.config.OneDrive.MonitorPaths), folderID)
-		
+
 		// Get folder info for client names
 		subfolders, err := client.GetSubfolders(folderID)
 		if err != nil {
@@ -111,7 +111,7 @@ func (m *Monitor) CheckOnce() error {
 		// Check each client folder
 		for _, subfolder := range subfolders {
 			logger.Debug("Checking client: %s (ID: %s)", subfolder.Name, subfolder.ID)
-			
+
 			status := m.checkClientBackup(client, subfolder.ID, subfolder.Name)
 			statuses = append(statuses, status)
 
@@ -121,7 +121,7 @@ func (m *Monitor) CheckOnce() error {
 				failedClients = append(failedClients, status.ClientName)
 			} else if status.HasBackup {
 				successCount++
-				logger.Info("✅ Client %s: Backup found for today (%d files)", 
+				logger.Info("✅ Client %s: Backup found in last 24 hours (%d files)",
 					status.ClientName, status.FileCount)
 			} else {
 				failedCount++
@@ -130,7 +130,7 @@ func (m *Monitor) CheckOnce() error {
 				if !status.LastBackup.IsZero() {
 					lastBackupStr = status.LastBackup.Format("2006-01-02 15:04:05")
 				}
-				logger.Error("❌ Client %s: No backup for today, last backup: %s", 
+				logger.Error("❌ Client %s: No backup in last 24 hours, last backup: %s",
 					status.ClientName, lastBackupStr)
 			}
 		}
@@ -171,8 +171,8 @@ func (m *Monitor) checkClientBackup(client *onedrive.Client, folderID, clientNam
 		FolderPath: folderID,
 	}
 
-	// Check if there are backups for today
-	hasBackup, todayFiles, err := client.CheckTodayBackups(folderID)
+	// Check if there are backups in the last 24 hours
+	hasBackup, recentFiles, err := client.CheckTodayBackups(folderID)
 	if err != nil {
 		status.Error = err
 		logger.Error("Failed to check backup for client %s: %v", clientName, err)
@@ -180,7 +180,7 @@ func (m *Monitor) checkClientBackup(client *onedrive.Client, folderID, clientNam
 	}
 
 	status.HasBackup = hasBackup
-	status.FileCount = len(todayFiles)
+	status.FileCount = len(recentFiles)
 
 	// Get all backup files to find the most recent one
 	allFiles, err := client.GetAllSnapshots(folderID)
@@ -196,13 +196,13 @@ func (m *Monitor) checkClientBackup(client *onedrive.Client, folderID, clientNam
 			}
 		}
 		status.LastBackup = latestBackup
-		
+
 		// Log backup information for debugging
 		if !latestBackup.IsZero() {
-			logger.Debug("Client %s: Last backup was %s, Today's backup: %v", 
+			logger.Debug("Client %s: Last backup was %s, Recent backup (24h): %v",
 				clientName, latestBackup.Format("2006-01-02 15:04:05"), hasBackup)
 		} else {
-			logger.Debug("Client %s: No backups found, Today's backup: %v", 
+			logger.Debug("Client %s: No backups found, Recent backup (24h): %v",
 				clientName, hasBackup)
 		}
 	}
@@ -283,4 +283,4 @@ func (m *Monitor) refreshTokenIfNeeded() error {
 
 	logger.Info("OneDrive token refreshed successfully")
 	return nil
-} 
+}
