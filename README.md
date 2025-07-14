@@ -1,6 +1,6 @@
 # Restic Backup Checker
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/wellsgz/restic-backup-checker/releases)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/wellsgz/restic-backup-checker/releases)
 [![Go Version](https://img.shields.io/badge/go-1.21+-brightgreen.svg)](https://golang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -8,7 +8,7 @@ A cross-platform restic backup monitoring tool that checks OneDrive for daily re
 
 ## Version
 
-**Current Version**: 1.0.0
+**Current Version**: 1.1.0
 
 To check the version of your installation:
 
@@ -397,6 +397,25 @@ The application is designed with modularity in mind:
 5. Submit a pull request
 
 ## Changelog
+
+### Version 1.1.0 (2025-07-14)
+
+**Enhanced Backup Detection**
+
+#### 🚀 New Features
+- ✅ **24-Hour Rolling Window Detection**: Changed backup validation from calendar day-based to rolling 24-hour window from current time
+- ✅ **Improved Consistency**: Backup monitoring now works consistently regardless of when checks are performed during the day
+- ✅ **Enhanced Logging**: Updated log messages to reflect 24-hour detection criteria
+
+#### 🔧 Improvements
+- **Detection Logic**: Files are now considered valid if created within the last 24 hours (previously only files created "today")
+- **Documentation**: Updated README.md to reflect new 24-hour detection criteria
+- **Code Quality**: Applied comprehensive code formatting and cleanup across all packages
+
+#### 🛠️ Technical Changes
+- Modified `CheckTodayBackups()` method in OneDrive client to use `time.Now().Add(-24 * time.Hour)`
+- Updated monitor service log messages from "today" to "last 24 hours"
+- Enhanced CLAUDE.md documentation for development workflow
 
 ### Version 1.0.0 (2025-07-12)
 
